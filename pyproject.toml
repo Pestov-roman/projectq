@@ -1,0 +1,27 @@
+[project]
+name = "projectq"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Pestov-roman",email = "Pestov.Roman.N@yandex.ru"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "django (>=5.2,<6.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.11.4"
+pre-commit = "^4.2.0"
+
+[ruff]
+line-length = 88
+
+[tool.ruff.lint]
+ignore = ["F401"]
