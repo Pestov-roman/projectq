@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS rooms_room (
+    id SERIAL PRIMARY KEY,
+    description TEXT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS bookings_booking (
+    id SERIAL PRIMARY KEY,
+    room_id INTEGER NOT NULL REFERENCES rooms_room(id) ON DELETE CASCADE,
+    date_start DATE NOT NULL,
+    date_end DATE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
