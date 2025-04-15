@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.core.exceptions import ValidationError
 from .serializers import CreateBookingSerializer, BookingSerializer
-from src.core.services.booking_services import BookingService
+from src.core.services.booking_services import BookingServices
 
 
 class BookingCreateView(APIView):
@@ -18,9 +18,9 @@ class BookingCreateView(APIView):
         if serializer.is_valid():
             data = serializer.validated_data
             try:
-                booking = BookingService.create_booking(
+                booking = BookingServices.create_booking(
                     room_id=data["room"].id,
-                    date_start=data["data_start"],
+                    date_start=data["date_start"],
                     date_end=data["date_end"],
                 )
                 return Response(
@@ -30,7 +30,7 @@ class BookingCreateView(APIView):
                 return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response(
-                    {"erroe": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                    {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -47,7 +47,7 @@ class BookingDeleteView(APIView):
                 {"error": "booking_id is required"}, status=status.HTTP_400_BAD_REQUEST
             )
         try:
-            BookingService.delete_booking(booking_id)
+            BookingServices.delete_booking(booking_id)
             return Response({"status": "OK"})
         except Exception as e:
             return Response(
@@ -66,7 +66,7 @@ class BookingListView(APIView):
             return Response(
                 {"error": "room_id is required"}, status=status.HTTP_400_BAD_REQUEST
             )
-        bookings = BookingService.list_bookings_for_room(int(room_id))
+        bookings = BookingServices.get_bookings_for_room(int(room_id))
         serializer = BookingSerializer(bookings, many=True)
         data = [
             {
@@ -76,4 +76,4 @@ class BookingListView(APIView):
             }
             for b in serializer.data
         ]
-        return Response[data]
+        return Response(data)

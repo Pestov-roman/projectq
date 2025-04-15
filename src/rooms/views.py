@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.core.exceptions import ValidationError
 from src.rooms.serializers import CreateRoomSerializer, RoomSerializer
-from src.core.services.room_services import RoomService
+from src.core.services.room_services import RoomServices
 
 
 class RoomCreateView(APIView):
@@ -17,7 +17,7 @@ class RoomCreateView(APIView):
         serializer = CreateRoomSerializer(data=request.data)
         if serializer.is_valid():
             room_data = serializer.validated_data
-            room = RoomService.create_room(
+            room = RoomServices.create_room(
                 description=room_data["description"], price=room_data["price"]
             )
             return Response({"room_id": room.id}, status=status.HTTP_201_CREATED)
@@ -37,7 +37,7 @@ class RoomDeleteView(APIView):
                 {"error": "room_id is required"}, status=status.HTTP_400_BAD_REQUEST
             )
         try:
-            RoomService.delete_room(room_id=int(room_id))
+            RoomServices.delete_room(room_id=int(room_id))
             return Response({"status": "OK"})
         except ValidationError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -58,6 +58,6 @@ class RoomListView(APIView):
         asc_param = request.query_params.get("asc", "1")
         ascending = asc_param != "0"
 
-        rooms = RoomService.list_rooms(order_by=order_by, ascending=ascending)
+        rooms = RoomServices.list_rooms(order_by=order_by, ascending=ascending)
         serializer = RoomSerializer(rooms, many=True)
         return Response(serializer.data)

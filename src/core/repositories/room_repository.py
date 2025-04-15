@@ -4,7 +4,7 @@ from src.rooms.models import Room
 class RoomRepository:
     @staticmethod
     def create_room(description: str, price: float) -> Room:
-        return Room.objects.create(description=description, price_per_night=price)
+        return Room.objects.create(description=description, price=price)
 
     @staticmethod
     def delete_room(room_id: int) -> None:
@@ -16,4 +16,4 @@ class RoomRepository:
             order_by = "created_at"
         if not ascending:
             order_by = "-" + order_by
-        return Room.objects().all().order_by(order_by)
+        return Room.objects.all().order_by(order_by)

@@ -1,9 +1,12 @@
-version: '3.12'
+version: '3.9'
+
 services:
   web:
-    build: .
-    container_name: django_app
-    command: python manage.py runserver 0.0.0.0:8000
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: projectq_web
+    command: gunicorn src.config.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - .:/app
     ports:
@@ -12,16 +15,28 @@ services:
       - .env
     depends_on:
       - db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   db:
     image: postgres:15
-    container_name: postgres_db
-    env_file:
-      - .env
+    container_name: projectq_db
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${DATABASE_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:

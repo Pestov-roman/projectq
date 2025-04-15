@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from src.core.repositories.booking_repository import BookingRepository
 
 
-class BookingService:
+class BookingServices:
     @staticmethod
     def create_booking(room_id: int, date_start: date, date_end: date):
         if not BookingRepository.is_available(room_id, date_start, date_end):
@@ -15,5 +15,5 @@ class BookingService:
         BookingRepository.delete_booking(booking_id)
 
     @staticmethod
-    def list_bookings_for_room(room_id: int) -> list:
+    def get_bookings_for_room(room_id: int) -> list:
         return BookingRepository.get_bookings_by_room(room_id)

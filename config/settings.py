@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -60,11 +61,11 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "hotel_db",
-        "USER": "user",
-        "PASSWORD": "password",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
+        "NAME": os.getenv("DATABASE_NAME", "hotel_db"),
+        "USER": os.getenv("DATABASE_USER", "hotel_user"),
+        "PASSWORD": os.getenv("DATABASE_PASSWORD", "hotel_pass"),
+        "HOST": os.getenv("DATABASE_HOST", "localhost"),
+        "PORT": os.getenv("DATABASE_PORT", "5432"),
     }
 }
 
@@ -87,7 +88,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "ru-ru"
 
-TIME_ZONE = "UTC+3"
+TIME_ZONE = "Europe/Moscow"
 
 USE_I18N = True
 
@@ -109,6 +110,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PARSER_CLASSES": [
         "rest_framework.parsers.FormParser",
         "rest_framework.parsers.JSONParser",
+        "rest_framework.parsers.MultiPartParser",
     ],
 }
 
