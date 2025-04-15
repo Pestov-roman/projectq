@@ -1,6 +1,7 @@
 from datetime import date
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from src.core.repositories.booking_repository import BookingRepository
+from src.core.models.booking import Booking
 
 
 class BookingServices:
@@ -12,8 +13,16 @@ class BookingServices:
 
     @staticmethod
     def delete_booking(booking_id: int) -> None:
-        BookingRepository.delete_booking(booking_id)
+        try:
+            booking = BookingRepository.get_booking_by_id(booking_id)
+            if not booking:
+                raise ObjectDoesNotExist(f"Бронирование с ID {booking_id} не найдено")
+            BookingRepository.delete_booking(booking_id)
+        except ObjectDoesNotExist as e:
+            raise ValidationError(str(e))
+        except Exception as e:
+            raise ValidationError(f"Ошибка при удалении бронирования: {str(e)}")
 
     @staticmethod
-    def get_bookings_for_room(room_id: int) -> list:
+    def get_bookings_for_room(room_id: int) -> list[Booking]:
         return BookingRepository.get_bookings_by_room(room_id)
