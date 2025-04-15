@@ -11,9 +11,9 @@ from src.bookings.models import Booking
 class RoomAPITestCase(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.create_url = reverse("room-create")  # /rooms/create
-        self.delete_url = reverse("room-delete")  # /rooms/delete
-        self.list_url = reverse("room-list")  # /rooms/list
+        self.create_url = reverse("room-create")
+        self.delete_url = reverse("room-delete") 
+        self.list_url = reverse("room-list")
 
     def test_create_room_success(self):
         data = {"description": "Sea view", "price": "1500"}
@@ -36,7 +36,7 @@ class RoomAPITestCase(APITestCase):
         self.assertFalse(Room.objects.filter(id=room.id).exists())
 
     def test_delete_room_no_param(self):
-        response = self.client.delete(self.delete_url)  # без параметров
+        response = self.client.delete(self.delete_url) 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("error", response.data)
 
@@ -135,6 +135,6 @@ class BookingAPITestCase(APITestCase):
         self.assertEqual(bookings_data[1]["booking_id"], b1.id)
 
     def test_list_bookings_no_room_id(self):
-        response = self.client.get(self.list_url)  # нет ?room_id
+        response = self.client.get(self.list_url) 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("error", response.data)
