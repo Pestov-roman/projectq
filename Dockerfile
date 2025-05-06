@@ -16,13 +16,13 @@ WORKDIR /app
 
 COPY pyproject.toml poetry.lock ./
 
-RUN poetry install --no-root --with dev
+RUN poetry config virtualenvs.create false && poetry install --no-root --with dev
 
 COPY . .
 
 EXPOSE 8000
 
-CMD ["poetry", "run", "gunicorn", "src.config.wsgi:application", \
+CMD ["poetry", "run", "gunicorn", "config.wsgi:application", \
     "--bind", "0.0.0.0:8000", \
     "--workers", "4", \
     "--worker-class", "uvicorn.workers.UvicornWorker", \
