@@ -1,11 +1,11 @@
 from src.core.repositories.room_repository import RoomRepository
-from src.core.models.room import Room
+from src.core.models import Room
 
 
 class RoomServices:
     @staticmethod
-    def create_room(description: str, price: float) -> Room:
-        room = RoomRepository.create_room(description, price)
+    def create_room(description: str, price_per_night: float) -> Room:
+        room = RoomRepository.create_room(description, price_per_night)
         return room
 
     @staticmethod

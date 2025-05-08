@@ -9,7 +9,7 @@ from src.core.services.room_services import RoomServices
 class RoomCreateView(APIView):
     """
     POST /rooms/create
-    Принимает: description, price
+    Принимает: description, price_per_night
     Возвращает {"room_id": <id>}
     """
 
@@ -18,7 +18,8 @@ class RoomCreateView(APIView):
         if serializer.is_valid():
             room_data = serializer.validated_data
             room = RoomServices.create_room(
-                description=room_data["description"], price=room_data["price"]
+                description=room_data["description"],
+                price_per_night=room_data["price_per_night"],
             )
             return Response({"room_id": room.id}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -49,7 +50,7 @@ class RoomDeleteView(APIView):
 
 class RoomListView(APIView):
     """
-    GET /rooms/list?order_by=price&asc=0
+    GET /rooms/list?order_by=price_per_night&asc=0
     По умолчанию сортировка по created_at (asc)
     """
 

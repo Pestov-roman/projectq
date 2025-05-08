@@ -1,4 +1,4 @@
-from src.rooms.models import Room
+from src.core.models import Room
 from datetime import date
 from src.bookings.models import Booking
 from typing import Optional
@@ -6,9 +6,9 @@ from typing import Optional
 
 class BookingRepository:
     @staticmethod
-    def create_booking(room_id: int, date_start: date, date_end: date) -> Booking:
+    def create_booking(room_id: int, check_in: date, check_out: date) -> Booking:
         return Booking.objects.create(
-            room_id=room_id, date_start=date_start, date_end=date_end
+            room_id=room_id, check_in=check_in, check_out=check_out
         )
 
     @staticmethod
@@ -17,14 +17,14 @@ class BookingRepository:
 
     @staticmethod
     def get_bookings_by_room(room_id: int) -> list[Booking]:
-        return Booking.objects.filter(room_id=room_id).order_by("date_start")
+        return Booking.objects.filter(room_id=room_id).order_by("check_in")
 
     @staticmethod
-    def is_available(room_id: int, date_start: date, date_end: date) -> bool:
+    def is_available(room_id: int, check_in: date, check_out: date) -> bool:
         overlapping_bookings = Booking.objects.filter(
             room_id=room_id,
-            date_start__lt=date_end,
-            date_end__gt=date_start,
+            check_in__lt=check_out,
+            check_out__gt=check_in,
         ).exists()
         return not overlapping_bookings
 

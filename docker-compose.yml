@@ -1,20 +1,26 @@
-version: '3.9'
-
 services:
   web:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: projectq_web
-    command: gunicorn src.config.wsgi:application --bind 0.0.0.0:8000
+    environment:
+      - PYTHONPATH=/app
+    command: >
+      sh -c "python src/manage.py collectstatic --noinput &&
+             python src/manage.py migrate &&
+             uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --workers 4"
     volumes:
       - .:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
     ports:
       - "8000:8000"
     env_file:
       - .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
       interval: 30s
@@ -28,13 +34,13 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      POSTGRES_DB: ${DATABASE_NAME}
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: hotel_db
+      POSTGRES_USER: hotel_user
+      POSTGRES_PASSWORD: hotel_pass
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${DATABASE_USER}"]
+      test: ["CMD", "pg_isready", "-U", "hotel_user", "-d", "hotel_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -42,6 +48,8 @@ services:
 
 volumes:
   postgres_data:
+  static_volume:
+  media_volume:
 
 networks:
   app_network:

@@ -1,15 +1,15 @@
 from datetime import date
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from src.core.repositories.booking_repository import BookingRepository
-from src.core.models.booking import Booking
+from src.core.models import Booking
 
 
 class BookingServices:
     @staticmethod
-    def create_booking(room_id: int, date_start: date, date_end: date):
-        if not BookingRepository.is_available(room_id, date_start, date_end):
+    def create_booking(room_id: int, check_in: date, check_out: date):
+        if not BookingRepository.is_available(room_id, check_in, check_out):
             raise ValidationError("Комната забронирована на эти даты")
-        return BookingRepository.create_booking(room_id, date_start, date_end)
+        return BookingRepository.create_booking(room_id, check_in, check_out)
 
     @staticmethod
     def delete_booking(booking_id: int) -> None:

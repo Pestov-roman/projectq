@@ -5,10 +5,10 @@ from .models import Booking
 class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = ["id", "room", "date_start", "date_end", "created_at"]
+        fields = ["id", "room", "check_in", "check_out", "created_at"]
 
 
 class CreateBookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = ["room", "date_start", "date_end"]
+        fields = ["room", "check_in", "check_out"]

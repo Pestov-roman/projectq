@@ -7,12 +7,6 @@ from src.core.services.booking_services import BookingServices
 
 
 class BookingCreateView(APIView):
-    """
-    POST /booking/create
-    Принимает: room, date_start, date_end
-    Возвращает: {"booking_id": <id>}
-    """
-
     def post(self, request):
         serializer = CreateBookingSerializer(data=request.data)
         if serializer.is_valid():
@@ -20,8 +14,8 @@ class BookingCreateView(APIView):
             try:
                 booking = BookingServices.create_booking(
                     room_id=data["room"].id,
-                    date_start=data["date_start"],
-                    date_end=data["date_end"],
+                    check_in=data["check_in"],
+                    check_out=data["check_out"],
                 )
                 return Response(
                     {"booking_id": booking.id}, status=status.HTTP_201_CREATED
@@ -71,8 +65,8 @@ class BookingListView(APIView):
         data = [
             {
                 "booking_id": b["id"],
-                "date_start": b["date_start"],
-                "date_end": b["date_end"],
+                "check_in": b["check_in"],
+                "check_out": b["check_out"],
             }
             for b in serializer.data
         ]

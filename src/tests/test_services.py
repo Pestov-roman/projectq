@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from datetime import date
 
-from src.rooms.models import Room
+from src.core.models import Room
 from src.bookings.models import Booking
 from src.core.services.room_services import RoomServices
 from src.core.services.booking_services import BookingServices

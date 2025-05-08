@@ -1,6 +1,6 @@
 from django.test import TestCase
 from datetime import date
-from src.rooms.models import Room
+from src.core.models import Room
 from src.bookings.models import Booking
 from src.core.repositories.room_repository import RoomRepository
 from src.core.repositories.booking_repository import BookingRepository
