@@ -11,4 +11,4 @@ class RoomSerializer(serializers.ModelSerializer):
 class CreateRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
-        fields = ["description", "price_per_night"]
+        fields = ["number", "description", "price_per_night", "capacity"]

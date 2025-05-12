@@ -7,12 +7,6 @@ from src.core.services.room_services import RoomServices
 
 
 class RoomCreateView(APIView):
-    """
-    POST /rooms/create
-    Принимает: description, price_per_night
-    Возвращает {"room_id": <id>}
-    """
-
     def post(self, request, *args, **kwargs):
         serializer = CreateRoomSerializer(data=request.data)
         if serializer.is_valid():
@@ -20,17 +14,14 @@ class RoomCreateView(APIView):
             room = RoomServices.create_room(
                 description=room_data["description"],
                 price_per_night=room_data["price_per_night"],
+                capacity=room_data["capacity"],
+                number=room_data["number"],
             )
             return Response({"room_id": room.id}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RoomDeleteView(APIView):
-    """
-    DELETE /rooms/delete?room_id=123
-    Удаляет комнату и все её брони
-    """
-
     def delete(self, request, *args, **kwargs):
         room_id = request.query_params.get("room_id")
         if not room_id:
@@ -49,11 +40,6 @@ class RoomDeleteView(APIView):
 
 
 class RoomListView(APIView):
-    """
-    GET /rooms/list?order_by=price_per_night&asc=0
-    По умолчанию сортировка по created_at (asc)
-    """
-
     def get(self, request, *args, **kwargs):
         order_by = request.query_params.get("order_by", "created_at")
         asc_param = request.query_params.get("asc", "1")

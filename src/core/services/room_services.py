@@ -4,8 +4,12 @@ from src.core.models import Room
 
 class RoomServices:
     @staticmethod
-    def create_room(description: str, price_per_night: float) -> Room:
-        room = RoomRepository.create_room(description, price_per_night)
+    def create_room(
+        description: str, price_per_night: float, capacity: int, number: str
+    ) -> Room:
+        room = RoomRepository.create_room(
+            description, price_per_night, capacity, number
+        )
         return room
 
     @staticmethod

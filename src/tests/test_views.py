@@ -1,7 +1,6 @@
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from django.urls import reverse
-from django.core.exceptions import ValidationError
 from datetime import date
 
 from src.core.models import Room
@@ -16,7 +15,7 @@ class RoomAPITestCase(APITestCase):
         self.list_url = reverse("room-list")
 
     def test_create_room_success(self):
-        data = {"description": "Sea view", "price": "1500"}
+        data = {"description": "Sea view", "price_per_night": "1500", "capacity": 2}
         response = self.client.post(self.create_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn("room_id", response.data)
@@ -29,7 +28,9 @@ class RoomAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_delete_room_success(self):
-        room = Room.objects.create(description="Test Room", price=123)
+        room = Room.objects.create(
+            description="Test Room", price_per_night=123, capacity=2
+        )
         url = f"{self.delete_url}?room_id={room.id}"
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -41,8 +42,8 @@ class RoomAPITestCase(APITestCase):
         self.assertIn("error", response.data)
 
     def test_list_rooms_default(self):
-        r1 = Room.objects.create(description="R1", price=100)
-        r2 = Room.objects.create(description="R2", price=200)
+        r1 = Room.objects.create(description="R1", price_per_night=100, capacity=2)
+        r2 = Room.objects.create(description="R2", price_per_night=200, capacity=3)
         response = self.client.get(self.list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
@@ -50,9 +51,9 @@ class RoomAPITestCase(APITestCase):
         self.assertEqual(response.data[1]["id"], r2.id)
 
     def test_list_rooms_price_desc(self):
-        r1 = Room.objects.create(description="R1", price=100)
-        r2 = Room.objects.create(description="R2", price=200)
-        url = f"{self.list_url}?order_by=price&asc=0"
+        r1 = Room.objects.create(description="R1", price_per_night=100, capacity=2)
+        r2 = Room.objects.create(description="R2", price_per_night=200, capacity=3)
+        url = f"{self.list_url}?order_by=price_per_night&asc=0"
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual([res["id"] for res in response.data], [r2.id, r1.id])
@@ -65,7 +66,9 @@ class BookingAPITestCase(APITestCase):
         self.delete_url = reverse("booking-delete")
         self.list_url = reverse("booking-list")
 
-        self.room = Room.objects.create(description="Test Room", price=999)
+        self.room = Room.objects.create(
+            description="Test Room", price_per_night=999, capacity=2
+        )
 
     def test_create_booking_success(self):
         data = {

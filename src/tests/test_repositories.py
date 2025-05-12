@@ -8,14 +8,18 @@ from src.core.repositories.booking_repository import BookingRepository
 
 class RoomRepositoryTest(TestCase):
     def test_create_room_ok(self):
-        room = RoomRepository.create_room(description="Luxe", price=1000)
+        room = RoomRepository.create_room(description="Luxe", price=1000, capacity=2)
         self.assertEqual(room.description, "Luxe")
         self.assertEqual(room.price, 1000)
+        self.assertEqual(room.capacity, 2)
 
     def test_delete_room_ok(self):
-        room = RoomRepository.create_room(description="Room to delete", price=100)
+        room = RoomRepository.create_room(
+            description="Room to delete", price=100, capacity=2
+        )
         self.assertEqual(room.description, "Room to delete")
         self.assertEqual(room.price, 100)
+        self.assertEqual(room.capacity, 2)
 
     def test_delete_room_nonexistent(self):
         initial_count = Room.objects.count()
@@ -23,20 +27,20 @@ class RoomRepositoryTest(TestCase):
         self.assertEqual(Room.objects.count(), initial_count)
 
     def test_get_rooms_default_order(self):
-        r1 = RoomRepository.create_room(description="Room 1", price=500)
-        r2 = RoomRepository.create_room(description="Room 2", price=1000)
+        r1 = RoomRepository.create_room(description="Room 1", price=500, capacity=2)
+        r2 = RoomRepository.create_room(description="Room 2", price=1000, capacity=3)
         rooms = RoomRepository.get_rooms()
         self.assertListEqual([r.id for r in rooms], [r1.id, r2.id])
 
     def test_get_rooms_price_asc(self):
-        r1 = RoomRepository.create_room(description="Room 1", price=500)
-        r2 = RoomRepository.create_room(description="Room 2", price=1000)
+        r1 = RoomRepository.create_room(description="Room 1", price=500, capacity=2)
+        r2 = RoomRepository.create_room(description="Room 2", price=1000, capacity=3)
         rooms = RoomRepository.get_rooms(order_by="price", ascending=True)
         self.assertListEqual([r.id for r in rooms], [r1.id, r2.id])
 
     def test_get_rooms_price_desc(self):
-        r1 = RoomRepository.create_room(description="Room 1", price=500)
-        r2 = RoomRepository.create_room(description="Room 2", price=1000)
+        r1 = RoomRepository.create_room(description="Room 1", price=500, capacity=2)
+        r2 = RoomRepository.create_room(description="Room 2", price=1000, capacity=3)
         rooms = RoomRepository.get_rooms(order_by="price", ascending=False)
         self.assertListEqual([r.id for r in rooms], [r2.id, r1.id])
 

@@ -10,26 +10,29 @@ from src.core.services.booking_services import BookingServices
 
 class RoomServicesTest(TestCase):
     def test_create_room_ok(self):
-        room = RoomServices.create_room(description="Test Room", price=1500)
+        room = RoomServices.create_room(description="Test Room", price=1500, capacity=2)
         self.assertIsNotNone(room.id)
         self.assertEqual(room.description, "Test Room")
         self.assertEqual(room.price, 1500)
+        self.assertEqual(room.capacity, 2)
 
     def test_delete_room_ok(self):
-        room = RoomServices.create_room(description="Room to delete", price=500)
+        room = RoomServices.create_room(
+            description="Room to delete", price=500, capacity=2
+        )
         room_id = room.id
         RoomServices.delete_room(room_id)
         self.assertFalse(Room.objects.filter(id=room_id).exists())
 
     def test_list_rooms_default(self):
-        r1 = RoomServices.create_room(description="Room 1", price=1000)
-        r2 = RoomServices.create_room(description="Room 2", price=500)
+        r1 = RoomServices.create_room(description="Room 1", price=1000, capacity=2)
+        r2 = RoomServices.create_room(description="Room 2", price=500, capacity=3)
         rooms = RoomServices.list_rooms()
         self.assertEqual([r.id for r in rooms], [r1.id, r2.id])
 
     def test_list_rooms_by_price_desc(self):
-        r1 = RoomServices.create_room(description="Room 1", price=500)
-        r2 = RoomServices.create_room(description="Room 2", price=1000)
+        r1 = RoomServices.create_room(description="Room 1", price=500, capacity=2)
+        r2 = RoomServices.create_room(description="Room 2", price=1000, capacity=3)
         rooms = RoomServices.list_rooms(order_by="price", ascending=False)
         self.assertEqual([r.id for r in rooms], [r2.id, r1.id])
 
